@@ -1,0 +1,1 @@
+branches = relationship("Branch", back_populates="company", cascade="all, delete")
