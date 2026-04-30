@@ -1,6 +1,13 @@
+
+
+
+
 # import boto3
 # import uuid
 # import os
+# from dotenv import load_dotenv
+
+# load_dotenv()
 
 # s3 = boto3.client(
 #     "s3",
@@ -9,28 +16,34 @@
 #     region_name=os.getenv("AWS_REGION")
 # )
 
-# BUCKET = os.getenv("AWS_BUCKET_NAME")
+# BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
 
 
-# def upload_file(file, folder="vendors"):
+# def upload_file_s3(file, folder="vendors"):
 #     try:
-#         ext = file.filename.split(".")[-1]
-#         file_name = f"{folder}/{uuid.uuid4()}.{ext}"
+#         file_ext = file.filename.split(".")[-1]
+#         file_name = f"{folder}/{uuid.uuid4()}.{file_ext}"
 
 #         s3.upload_fileobj(
 #             file.file,
-#             BUCKET,
+#             BUCKET_NAME,
 #             file_name,
 #             ExtraArgs={
-#                 "ContentType": file.content_type
+#                 "ContentType": file.content_type,
+#                 "ACL": "public-read"
 #             }
 #         )
 
-#         return f"https://{BUCKET}.s3.amazonaws.com/{file_name}"
+#         file_url = f"https://{BUCKET_NAME}.s3.{os.getenv('AWS_REGION')}.amazonaws.com/{file_name}"
+
+#         return file_url
 
 #     except Exception as e:
 #         print("S3 Upload Error:", e)
 #         return None
+
+
+
 
 
 
@@ -53,6 +66,9 @@ BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
 
 def upload_file_s3(file, folder="vendors"):
     try:
+        # ✅ VERY IMPORTANT
+        file.file.seek(0)
+
         file_ext = file.filename.split(".")[-1]
         file_name = f"{folder}/{uuid.uuid4()}.{file_ext}"
 
@@ -68,8 +84,10 @@ def upload_file_s3(file, folder="vendors"):
 
         file_url = f"https://{BUCKET_NAME}.s3.{os.getenv('AWS_REGION')}.amazonaws.com/{file_name}"
 
+        print("Uploaded:", file_url)  # ✅ debug
+
         return file_url
 
     except Exception as e:
-        print("S3 Upload Error:", e)
+        print("❌ S3 Upload Error:", e)
         return None

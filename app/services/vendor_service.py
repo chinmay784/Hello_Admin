@@ -183,12 +183,6 @@ async def create_vendor(
     compliance = json.loads(compliance)
 
 
-    # Upload files to Cloudinary
-    pan_url = upload_file(pan_card)
-    gst_url = upload_file(gst_certificate)
-    cheque_url = upload_file(cancelled_cheque)
-    address_url = upload_file(address_proof)
-    iso_url = upload_file(iso_certificate) if iso_certificate else None
 
     # ✅ Upload to S3
     pan_url = upload_file_s3(pan_card, "vendors/docs")
