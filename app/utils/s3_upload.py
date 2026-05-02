@@ -63,10 +63,8 @@ s3 = boto3.client(
 
 BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
 
-
 def upload_file_s3(file, folder="vendors"):
     try:
-        # ✅ VERY IMPORTANT
         file.file.seek(0)
 
         file_ext = file.filename.split(".")[-1]
@@ -77,15 +75,13 @@ def upload_file_s3(file, folder="vendors"):
             BUCKET_NAME,
             file_name,
             ExtraArgs={
-                "ContentType": file.content_type,
-                "ACL": "public-read"
+                "ContentType": file.content_type   # ✅ FIXED
             }
         )
 
         file_url = f"https://{BUCKET_NAME}.s3.{os.getenv('AWS_REGION')}.amazonaws.com/{file_name}"
 
-        print("Uploaded:", file_url)  # ✅ debug
-
+        print("Uploaded:", file_url)
         return file_url
 
     except Exception as e:
