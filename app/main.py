@@ -106,6 +106,7 @@ app.include_router(product_router)
 def home():
     return {"message": "Admin Backend Running"}
 
+print("Admin Backend Running...")
 import os
 print("MONGO_URI:", os.getenv("MONGO_URI"))
 print("DB_NAME:", os.getenv("DB_NAME"))

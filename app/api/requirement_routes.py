@@ -1,3 +1,4 @@
+from app.services.product_service import procureTeamCanSeeProduct
 from fastapi import APIRouter, Depends
 from app.models.requirement_model import Requirement
 from app.db.database import requirement_collection ,vendor_collection
@@ -80,3 +81,9 @@ def see_all_vendor_approve_requirements(requirement_id: str):
         "requirement_id": requirement["_id"],
         "approved_vendors": vendors
     }
+
+
+
+@router.get("/All-Vendor-Products")
+def get_all_products_for_procurement():
+     return procureTeamCanSeeProduct()

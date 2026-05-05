@@ -71,7 +71,7 @@ from typing import List
 import json
 
 from app.schemas.product_schema import ProductCreate
-from app.services.product_service import create_product
+from app.services.product_service import create_product, getVendorAllProduct
 from app.utils.cloudinary_upload import upload_file
 
 from app.utils.s3_upload import upload_file_s3
@@ -155,3 +155,10 @@ async def add_product(
     )
 
     return create_product(product_data, image_urls, document_urls, vendor_id)
+
+
+@router.get("/my-products/{vendor_id}")
+def get_my_products(vendor_id: str):
+    return getVendorAllProduct(vendor_id)
+
+
