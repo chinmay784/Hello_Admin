@@ -364,7 +364,7 @@ async def login_vendor(data):
         email = vendor["contact_details"]["email"]
         vendor_code = generate_vendor_code()
 
-        await send_email(email, vendor_code)
+        await send_email(email, vendor_code,vendor["legal_details"]["legal_entity_name"])
 
         vendor_collection.update_one(
             {"_id": vendor["_id"]},
