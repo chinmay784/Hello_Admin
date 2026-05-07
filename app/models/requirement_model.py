@@ -6,6 +6,7 @@ class Requirement(BaseModel):
     title: str
     description: str
     quantity: int
+    product_Name: str
     category: str
     company_Name: str
     status: str = "open"
