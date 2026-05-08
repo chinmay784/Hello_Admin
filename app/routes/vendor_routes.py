@@ -149,9 +149,21 @@ def vendorApprove_Requirement(requirement_id: str, current_user=Depends(get_curr
     # print(current_user)
 
     # ✅ Prevent duplicate + add vendor
+    # requirement_collection.update_one(
+    #     {"_id": ObjectId(requirement_id)},
+    #     {"$addToSet": {"ApproveVendor_ids": current_user["vendor_id"]}}
+    # )
+
     requirement_collection.update_one(
         {"_id": ObjectId(requirement_id)},
-        {"$addToSet": {"ApproveVendor_ids": current_user["vendor_id"]}}
+        {
+            "$addToSet": {
+                "ApproveVendor_ids": current_user["vendor_id"]
+            },
+            "$set": {
+                "status": "Approved"
+            }
+        }
     )
 
     return {"message": "Requirement approved successfully by vendor"}
