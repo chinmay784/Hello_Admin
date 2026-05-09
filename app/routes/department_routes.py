@@ -3,6 +3,8 @@ from bson import ObjectId
 from app.db.database import db
 from app.schemas.department_schema import DepartmentCreate, DepartmentByBranch
 from app.utils.dependencies import get_current_user   # your auth middleware
+from app.schemas.department_schema import UpdateDepartmentHead
+from app.db.database import depertment_Head_collection
 
 router = APIRouter(prefix="/departments", tags=["Departments"])
 
@@ -71,3 +73,81 @@ def delete_department(
         raise HTTPException(status_code=404, detail="Department not found")
 
     return {"message": "Deleted successfully"}
+
+
+
+
+
+
+
+
+
+@router.put("/assign-head/{department_id}")
+def assign_department_head(
+    department_id: str,
+    data: UpdateDepartmentHead
+):
+
+    try:
+        dept_id = ObjectId(department_id)
+        head_id = ObjectId(data.head_id)
+
+    except:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid ID"
+        )
+
+    # check department exists
+    department = db["departments"].find_one({
+        "_id": dept_id
+    })
+
+    if not department:
+        raise HTTPException(
+            status_code=404,
+            detail="Department not found"
+        )
+
+    # check user exists
+    # user = db["adminUsers"].find_one({
+    #     "_id": head_id
+    # })
+
+    # if not user:
+    #     raise HTTPException(
+    #         status_code=404,
+    #         detail="User not found"
+    #     )
+
+    # update head_id
+    db["departments"].update_one(
+        {"_id": dept_id},
+        {
+            "$set": {
+                "head_id": head_id
+            }
+        }
+    )
+
+    # and also do in or create depertment_head collections
+    depertment_Head_collection.update_one(
+        {"department_id": dept_id},
+        {
+            "$set": {
+                "department_id": dept_id,
+                "head_id": head_id,
+                "head_name": data.head_name,
+                "head_email": data.head_email,
+                "head_mobileno": data.head_mobileno
+            }
+        },
+        upsert=True
+    )
+
+
+    return {
+        "message": "Department head assigned successfully"
+    }
+
+

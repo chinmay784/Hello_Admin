@@ -16,3 +16,4 @@ procurement_collection = db["procurement"]
 
 requirement_collection = db["requirements"]
 product_collection = db["products"]
+depertment_Head_collection = db["department_head"]
