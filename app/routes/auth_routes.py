@@ -113,6 +113,7 @@ from app.utils.db_helpers import get_user_by_email, get_user_by_token, update_us
 from app.utils.hash import hash_password
 from app.utils.token import generate_reset_token
 # from app.utils.email import send_reset_email   # keep off for now
+from app.db.database import db
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -179,3 +180,56 @@ def reset_password(data: ResetPasswordSchema):
         print("ERROR:", str(e))
         raise HTTPException(status_code=500, detail="Internal Server Error")
     
+
+
+# from bson import ObjectId
+
+# @router.get("/fetch-All-depertments-Onthe-basis-of-Branch/{branch_id}")
+# def get_all_departments(branch_id: str):
+
+#     try:
+#         departments = list(
+#             db["departments"].find(
+#                 {"branch_id": ObjectId(branch_id)},
+#                 {"_id": 0, "name": 1}
+#             )
+#         )
+
+#         return departments
+
+#     except Exception as e:
+#         raise HTTPException(status_code=400, detail=str(e))
+
+from bson import ObjectId
+
+@router.get("/fetch-All-DepertmentHead-Onthe-basis-of-Depertment/{department_id}")
+def get_DepertmentHead(department_id: str):
+
+    try:
+        depertment_Head = list(
+            db["department_head"].find(
+                {"department_id": ObjectId(department_id)},
+                {
+                    "_id": 0,
+                    "head_name": 1,
+                    "head_email": 1,
+                    "head_mobileno": 1
+                }
+            )
+        )
+
+        # and i want to send department name also in response so i will do one more query to get department name
+        department = db["departments"].find_one(
+            {"_id": ObjectId(department_id)},
+            {"_id": 0, "name": 1}
+        )
+        
+
+        # Combine department name with department head information
+        for head in depertment_Head:
+            head["department_name"] = department.get("name", "Unknown")
+
+        return depertment_Head
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
