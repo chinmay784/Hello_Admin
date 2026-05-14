@@ -16,8 +16,8 @@ class Address(BaseModel):
     state: str
     country: str
     pinCode: str
-    lattitude: str
-    longitude: str
+    # lattitude: str
+    # longitude: str
 
 
 class Contact(BaseModel):

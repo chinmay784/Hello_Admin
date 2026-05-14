@@ -105,6 +105,8 @@
 #         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
+from datetime import datetime
+
 from fastapi import APIRouter, HTTPException
 from app.schemas.auth_schema import RegisterSchema, LoginSchema
 from app.controllers.auth_controller import register_controller, login_controller
@@ -114,6 +116,7 @@ from app.utils.hash import hash_password
 from app.utils.token import generate_reset_token
 # from app.utils.email import send_reset_email   # keep off for now
 from app.db.database import db
+from app.db.database import modules_collection
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -230,6 +233,74 @@ def get_DepertmentHead(department_id: str):
             head["department_name"] = department.get("name", "Unknown")
 
         return depertment_Head
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+
+
+# =====================================================
+# CREATE WEBSITE / MODULE /WORK
+# =====================================================
+from app.schemas.module_schema import ModuleCreate
+
+@router.post("/create-module")
+def create_module(data: ModuleCreate):
+
+    try:
+
+        module_data = {
+
+            "module_name": data.module_name,
+
+            "module_url": data.module_url,
+
+            "department_id": ObjectId(data.department_id),
+
+            "created_at": datetime.utcnow()
+        }
+
+        result = modules_collection.insert_one(module_data)
+
+        return {
+            "message": "Module Created Successfully",
+            "module_id": str(result.inserted_id)
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+
+# ----------------------------------------------
+# work on Admin Add Employee under department head
+# ----------------------------------------------
+
+@router.post("/add-employee-under-department-head")
+def add_employee_under_department_head(employee_data: dict):
+    try:
+        # Validate input data
+        required_fields = ["name", "email", "mobile_no", "department_id"]
+        for field in required_fields:
+            if field not in employee_data:
+                raise HTTPException(status_code=400, detail=f"Missing field: {field}")
+
+        # Create employee record
+        employee_record = {
+            "name": employee_data["name"],
+            "email": employee_data["email"],
+            "mobile_no": employee_data["mobile_no"],
+            "department_id": ObjectId(employee_data["department_id"]),
+            "created_at": datetime.utcnow()
+        }
+
+        # Insert into database
+        result = db["employees"].insert_one(employee_record)
+
+        return {
+            "message": "Employee added successfully",
+            "employee_id": str(result.inserted_id)
+        }
 
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

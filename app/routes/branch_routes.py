@@ -77,6 +77,9 @@ def create_branch(
     branch = {
         "name": data.name,
         "location": data.location,
+        "lattitude": data.lattitude,
+        "longitude": data.longitude,
+        "radius": data.radius,
         "company_id": ObjectId(data.company_id)
     }
 
@@ -86,6 +89,9 @@ def create_branch(
         "_id": str(result.inserted_id),
         "name": data.name,
         "location": data.location,
+        "lattitude": data.lattitude,
+        "longitude": data.longitude,
+        "radius": data.radius,
         "company_id": data.company_id
     }
 

@@ -17,4 +17,7 @@ from pydantic import BaseModel
 class BranchCreateSchema(BaseModel):
     name: str
     location: str
+    lattitude: float
+    longitude: float
+    radius: float
     company_id: str
